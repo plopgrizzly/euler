@@ -11,7 +11,7 @@ keywords = ["math", "glsl", "vector", "quaternion", "matrix"]
 license = "MIT/Apache-2.0"
 
 [dependencies]
-approx = "0.1.1"
+approx = "0.2.0"
 cgmath = "0.15.0"
 mint = { optional = true, version = "0.4.1" }
 

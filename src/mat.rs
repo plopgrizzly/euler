@@ -1,4 +1,4 @@
-use approx::ApproxEq;
+use approx::{AbsDiffEq,RelativeEq,UlpsEq};
 use cgmath;
 use std::{fmt, mem, ops};
 use {DVec2, DVec3, DVec4, Vec2, Vec3, Vec4};
@@ -789,19 +789,9 @@ macro_rules! impl_matrix {
             }
         }
 
-        impl ApproxEq for $self {
-            type Epsilon = <$minner as ApproxEq>::Epsilon;
-
-            fn default_epsilon() -> Self::Epsilon {
-                <$minner as ApproxEq>::default_epsilon()
-            }
-
+        impl RelativeEq for $self {
             fn default_max_relative() -> Self::Epsilon {
-                <$minner as ApproxEq>::default_max_relative()
-            }
-
-            fn default_max_ulps() -> u32 {
-                <$minner as ApproxEq>::default_max_ulps()
+                <$minner as RelativeEq>::default_max_relative()
             }
 
             fn relative_eq(
@@ -814,6 +804,12 @@ macro_rules! impl_matrix {
                 let b: &$minner = other.as_ref().into();
                 a.relative_eq(&b, epsilon, max_relative)
             }
+        }
+
+        impl UlpsEq for $self {
+            fn default_max_ulps() -> u32 {
+                <$minner as UlpsEq>::default_max_ulps()
+            }
 
             fn ulps_eq(
                 &self,
@@ -824,6 +820,24 @@ macro_rules! impl_matrix {
                 let a: &$minner = self.as_ref().into();
                 let b: &$minner = other.as_ref().into();
                 a.ulps_eq(&b, epsilon, max_ulps)
+            }
+        }
+
+        impl AbsDiffEq for $self {
+            type Epsilon = <$minner as AbsDiffEq>::Epsilon;
+
+            fn default_epsilon() -> Self::Epsilon {
+                <$minner as AbsDiffEq>::default_epsilon()
+            }
+
+            fn abs_diff_eq(
+                &self,
+                other: &Self,
+                epsilon: Self::Epsilon,
+            ) -> bool {
+                let a: &$minner = self.as_ref().into();
+                let b: &$minner = other.as_ref().into();
+                a.abs_diff_eq(&b, epsilon)
             }
         }
     };
